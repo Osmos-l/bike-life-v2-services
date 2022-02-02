@@ -1,4 +1,5 @@
 const { check, validationResult } = require('express-validator');
+const responseRepository = require('../repository/response.repository');
 
 exports.validateUserOnRegister = [
     check('username')
@@ -25,7 +26,7 @@ exports.validateUserOnRegister = [
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(200).json({errors: errors.array()})
+            return responseRepository.error(res, errors.array());
         } else {
             next();
         }

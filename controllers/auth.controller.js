@@ -12,8 +12,8 @@ exports.register = async (req, res) => {
         const user = await userRepository.create(email, username, password);
 
         return responseRepository.created(res, user);
-    } catch (e) {
-        return responseRepository.error(res, e.message);
+    } catch (errors) {
+        return responseRepository.error(res, errors);
     }
 
 }

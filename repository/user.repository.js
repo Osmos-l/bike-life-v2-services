@@ -1,15 +1,20 @@
 const User = require('../models/user.model');
 
 const checkIfUserExist = async (email, username) => {
+    let errors = [];
     let user;
 
     user = await User.findOne({username});
     if (user) {
-        throw { message: 'An user already exist with this username' };
+        errors.push({ msg: 'An user already exist with this username', param: 'username' });
     }
     user = await User.findOne({email});
     if (user) {
-        throw { message: 'An user already exist with this email' };
+        errors.push({ msg: 'An user already exist with this email', param: 'email' });
+    }
+
+    if (errors.length != 0) {
+        throw errors;
     }
 }
 
