@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const Token = require('../token');
 
 const userSchema = mongoose.Schema({
     email: {type: String, required: true, unique: true,
@@ -25,5 +26,13 @@ userSchema.pre('save', async function(next) {
         next(e);
     }
 })
+
+userSchema.methods.comparePassword = async function(password) {
+    return await bcrypt.compare(password, this.password);
+}
+
+userSchema.methods.getAccessToken = async function() {
+    return await Token.generate({ ID: this._id }, "stub", "1d");
+}
 
 module.exports = mongoose.model('users', userSchema);

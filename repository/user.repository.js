@@ -25,3 +25,12 @@ exports.create = async (email, username, password) => {
 
     return await user.save();
 }
+
+exports.findOneByUsername = async (username) => {
+    const user = await User.findOne({username});
+    if (!user) {
+        throw 'User not found';
+    }
+
+    return user;
+}
