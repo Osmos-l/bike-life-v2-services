@@ -6,11 +6,8 @@ exports.good = (res, data) => {
     return res.status(200).json(data);
 }
 
-exports.setAccessToken = (res, token) => {
-    return res.cookie('access_token', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV == "prod"
-    })
+exports.login = (res, accessToken, refreshToken) => {
+    return this.good(res, {accessToken, refreshToken});
 }
 
 exports.error = (res, message) => {

@@ -40,15 +40,13 @@ exports.onLogin = [
         .withMessage('Username is required')
         .bail()
         .isLength({min: 5, max: 50})
-        .withMessage('Username must be 5 to 50 characters length !')
         .bail(),
     check('password')
         .isString()
         .notEmpty()
         .withMessage('Password is required')
         .bail()
-        .isLength({min: 5, max: 100})
-        .withMessage('Password must be 5 to 500 characters length !'),
+        .isLength({min: 5, max: 100}),
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {

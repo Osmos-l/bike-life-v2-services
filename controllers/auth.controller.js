@@ -11,16 +11,15 @@ exports.login = async (req, res) => {
 
     try {
         const user = await userRepository.findOneByUsername(username);
-
         const isValid = await user.comparePassword(password);
         if (!isValid) {
             throw 'Bad password';
         }
 
+        // TODO: Refresh token
         const access_token = await user.getAccessToken();
-        res = responseRepository.setAccessToken(res, access_token);
-
-        return responseRepository.good(res, hidePassword(user));
+        // const refresh_token = await user.getRefreshToken();
+        return responseRepository.login(res, access_token, 'stub');
     } catch (e) {
         return responseRepository.error(res, { msg: 'Invalid credentials' });
     }
