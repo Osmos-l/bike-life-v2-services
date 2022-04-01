@@ -6,8 +6,10 @@ exports.good = (res, data) => {
     return res.status(200).json(data);
 }
 
-exports.login = (res, accessToken, refreshToken) => {
-    return this.good(res, {accessToken, refreshToken});
+exports.login = (res, user, {accessToken, refreshToken}) => {
+    return this.good(res, { tokens: {accessToken, refreshToken},
+                                  user
+                                } );
 }
 
 exports.error = (res, message) => {

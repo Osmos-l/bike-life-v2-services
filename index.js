@@ -13,6 +13,9 @@ const run = async () => {
     const authRoutes = require('./routes/auth.route');
     app.use('/api/auth', authRoutes);
 
+    const bikeRoutes = require('./routes/bike.route');
+    app.use('/api/bike', bikeRoutes);
+
     app.listen(process.env.PORT)
     console.log(`Server is running on port ${process.env.PORT}`);
 }

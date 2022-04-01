@@ -17,15 +17,12 @@ exports.login = async (req, res) => {
         }
 
         // TODO: Refresh token
-        const access_token = await user.getAccessToken();
-        // const refresh_token = await user.getRefreshToken();
-        return responseRepository.login(res, access_token, 'stub');
+        const accessToken = await user.getAccessToken();
+        const refreshToken = "stub" // await user.getRefreshToken();
+        return responseRepository.login(res, hidePassword(user), {accessToken, refreshToken});
     } catch (e) {
         return responseRepository.error(res, { msg: 'Invalid credentials' });
     }
-
-
-    return responseRepository.created(res, {});
 }
 
 exports.register = async (req, res) => {

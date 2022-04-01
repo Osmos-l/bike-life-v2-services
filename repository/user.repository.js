@@ -31,3 +31,12 @@ exports.findOneByUsername = async (username) => {
 
     return user;
 }
+
+exports.findOneById = async (id) => {
+    const user = await User.findOne({_id: id});
+    if (!user) {
+        throw 'User not found';
+    }
+
+    return user;
+}
