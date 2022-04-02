@@ -31,6 +31,6 @@ module.exports = async (req, res, next) => {
             throw 'Bad access token';
         }
     } catch (e) {
-        responseRepository.error(res, "Requête non authentifiée");
+        responseRepository.notAuthenticated(res);
     }
 }

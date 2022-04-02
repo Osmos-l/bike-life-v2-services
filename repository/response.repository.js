@@ -15,3 +15,7 @@ exports.login = (res, user, {accessToken, refreshToken}) => {
 exports.error = (res, message) => {
     return res.status(200).json({errors: message});
 }
+
+exports.notAuthenticated = (res) => {
+    return res.status(401).json({error: "Not authenticated"});
+}

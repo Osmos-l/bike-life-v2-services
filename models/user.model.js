@@ -32,7 +32,7 @@ userSchema.methods.comparePassword = async function(password) {
 }
 
 userSchema.methods.getAccessToken = async function() {
-    return await Token.generate({ ID: this._id }, "stub", "1d");
+    return await Token.generate({ ID: this._id }, "stub", "1min");
 }
 
 module.exports = mongoose.model('users', userSchema);
