@@ -56,3 +56,22 @@ exports.onLogin = [
         }
     }
 ]
+
+exports.onRefreshToken = [
+    check('refreshToken')
+        .isString()
+        .bail()
+        .notEmpty()
+        .withMessage('Username is required')
+        .bail()
+        .isLength({min: 5, max: 50})
+        .bail(),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return responseRepository.error(res, errors.array());
+        } else {
+            next();
+        }
+    }
+]

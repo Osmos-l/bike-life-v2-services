@@ -8,13 +8,9 @@ exports.good = (res, data) => {
 
 exports.login = (res, user, {accessToken, refreshToken}) => {
     return res
-        .cookie("refresh_token", refreshToken, {
-            httpOnly: true,
-            secure: false,
-        })
         .status(200)
         .json({
-            tokens: {accessToken},
+            tokens: {accessToken, refreshToken},
             user
         });
 }

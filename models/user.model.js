@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const Token = require('../token');
+const refreshTokenRepository = require('../repository/refresh_token.repository');
 
 const userSchema = mongoose.Schema({
     email: {type: String, required: true, unique: true,
@@ -36,7 +37,16 @@ userSchema.methods.getAccessToken = async function() {
 }
 
 userSchema.methods.getRefreshToken = async function() {
-    return await Token.generate({ ID: this._id }, "stub", "1d");
+    const refreshToken = await refreshTokenRepository.getUserToken(this);
+
+    if (refreshToken) {
+        return refreshToken.token;
+    }
+
+    const token = await Token.generate({ ID: this._id }, "stub", "1d")
+    await refreshTokenRepository.insert(this, token);
+
+    return token;
 }
 
 module.exports = mongoose.model('users', userSchema);

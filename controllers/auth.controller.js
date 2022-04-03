@@ -1,6 +1,9 @@
 const responseRepository = require('../repository/response.repository');
 const userRepository = require('../repository/user.repository');
+const refreshTokenRepository = require('../repository/refresh_token.repository');
+
 const jwt = require('jsonwebtoken');
+
 
 const hidePassword = (user) => {
     const { password, ...info } = user._doc;
@@ -17,7 +20,6 @@ exports.login = async (req, res) => {
             throw 'Bad password';
         }
 
-        // TODO: Refresh token
         const accessToken = await user.getAccessToken();
         const refreshToken = await user.getRefreshToken();
         return responseRepository.login(res, hidePassword(user), {accessToken, refreshToken});
@@ -41,36 +43,28 @@ exports.register = async (req, res) => {
 
 
 exports.refreshToken = async (req, res) => {
+    const { refreshToken } = req.body;
+
     try {
-        const cookies = getReqCookies(req);
-        const refreshToken = cookies["refresh_token"];
-
-        if (!refreshToken) {
-            return responseRepository.error(res, "Bad refresh token");
+        const decodedToken = await jwt.verify(refreshToken, "stub");
+        if (!decodedToken || !decodedToken.ID) {
+            throw "Incorrect refresh token";
+        }
+        const user = await userRepository.findOneById(decodedToken.ID);
+        if (!user) {
+            throw "User not find";
         }
 
-        const payload = await jwt.verify(refreshToken, "stub");
-        const accessToken = await jwt.sign({ ID: payload.ID }, "stub", {
-            expiresIn: "1min"
-        });
-        return responseRepository.created(res, accessToken);
+        const refreshTokenSaved = await refreshTokenRepository.getUserToken(user);
+        if (!refreshTokenSaved || refreshTokenSaved.token !== refreshToken) {
+            throw "Refresh token do not match token in database";
+        }
+
+        const accessToken = await user.getAccessToken();
+        return responseRepository.good(res, {accessToken});
     } catch (e) {
-        console.log(e);
-        return responseRepository.error(res, e.message);
+        console.error(e);
+        return responseRepository.error(res, "Impossible to refresh with this token");
     }
-}
 
-
-const getReqCookies = (req) => {
-    const rawCookies = req.headers.cookie.split("; ");
-
-    const parsedCookies = {};
-    rawCookies.forEach(rawCookie => {
-        const parsedCookie = rawCookie.split("=");
-
-        if (parsedCookie.length == 2) {
-            parsedCookies[parsedCookie[0]] = parsedCookie[1];
-        }
-    })
-    return parsedCookies;
 }
