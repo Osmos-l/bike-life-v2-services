@@ -8,4 +8,6 @@ router.post('/login', validator.onLogin, controller.login)
 
 router.post('/register', validator.onRegister, controller.register)
 
+router.post('/refresh', controller.refreshToken);
+
 module.exports = router;

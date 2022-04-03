@@ -35,4 +35,8 @@ userSchema.methods.getAccessToken = async function() {
     return await Token.generate({ ID: this._id }, "stub", "1min");
 }
 
+userSchema.methods.getRefreshToken = async function() {
+    return await Token.generate({ ID: this._id }, "stub", "1d");
+}
+
 module.exports = mongoose.model('users', userSchema);

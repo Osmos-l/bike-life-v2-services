@@ -7,9 +7,16 @@ exports.good = (res, data) => {
 }
 
 exports.login = (res, user, {accessToken, refreshToken}) => {
-    return this.good(res, { tokens: {accessToken, refreshToken},
-                                  user
-                                } );
+    return res
+        .cookie("refresh_token", refreshToken, {
+            httpOnly: true,
+            secure: false,
+        })
+        .status(200)
+        .json({
+            tokens: {accessToken},
+            user
+        });
 }
 
 exports.error = (res, message) => {
@@ -17,5 +24,5 @@ exports.error = (res, message) => {
 }
 
 exports.notAuthenticated = (res) => {
-    return res.status(401).json({error: "Not authenticated"});
+    return res.status(403).json({error: "Not authenticated"});
 }
