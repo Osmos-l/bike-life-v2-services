@@ -47,6 +47,10 @@ exports.onLogin = [
         .withMessage('Password is required')
         .bail()
         .isLength({min: 5, max: 100}),
+    check('rememberMe')
+        .isBoolean()
+        .withMessage('rememberMe is required')
+        .bail(),
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {

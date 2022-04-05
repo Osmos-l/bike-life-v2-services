@@ -10,8 +10,9 @@ const hidePassword = (user) => {
 }
 
 exports.login = async (req, res) => {
-    const { username, password } = req.body;
+    const { username, password, rememberMe } = req.body;
 
+    console.log(req);
     try {
         const user = await userRepository.findOneByUsername(username);
         const isValid = await user.comparePassword(password);
@@ -19,9 +20,14 @@ exports.login = async (req, res) => {
             throw 'Bad password';
         }
 
-        const accessToken = await user.getAccessToken();
-        const refreshToken = await user.getRefreshToken();
-        return responseRepository.login(res, hidePassword(user), {accessToken, refreshToken});
+
+        const tokens = {
+            accessToken: await user.getAccessToken()
+        };
+        if (rememberMe) {
+            tokens.refreshToken = await user.getRefreshToken();
+        }
+        return responseRepository.login(res, hidePassword(user), tokens);
     } catch (e) {
         return responseRepository.error(res, { msg: 'Invalid credentials' });
     }
