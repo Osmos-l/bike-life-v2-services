@@ -26,5 +26,5 @@ exports.getBikesFromOwner = async (req, res) => {
 
     const bikes = await bikeRepository.getBikesFromOwner(owner);
 
-    return responseRepository.good(res, bikes);
+    return responseRepository.good(res, { bikes });
 }

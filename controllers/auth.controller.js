@@ -12,7 +12,6 @@ const hidePassword = (user) => {
 exports.login = async (req, res) => {
     const { username, password, rememberMe } = req.body;
 
-    console.log(req);
     try {
         const user = await userRepository.findOneByUsername(username);
         const isValid = await user.comparePassword(password);
