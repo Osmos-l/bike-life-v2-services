@@ -62,7 +62,24 @@ exports.onRefreshToken = [
         .isString()
         .bail()
         .notEmpty()
-        .withMessage('Username is required')
+        .withMessage('refresh token is required')
+        .bail(),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return responseRepository.error(res, errors.array());
+        } else {
+            next();
+        }
+    }
+]
+
+exports.onLogout = [
+    check('refreshToken')
+        .isString()
+        .bail()
+        .notEmpty()
+        .withMessage('refresh token is required')
         .bail(),
     (req, res, next) => {
         const errors = validationResult(req);

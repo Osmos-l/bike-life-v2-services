@@ -10,4 +10,6 @@ router.post('/register', validator.onRegister, controller.register)
 
 router.post('/refresh', validator.onRefreshToken, controller.refreshToken);
 
+router.post('/logout', validator.onLogout, controller.logout);
+
 module.exports = router;

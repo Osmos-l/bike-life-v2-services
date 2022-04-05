@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const Token = require('../token');
 const refreshTokenRepository = require('../repository/refresh_token.repository');
+const TokenExpiredError = require("jsonwebtoken/lib/TokenExpiredError");
+const jwt = require("jsonwebtoken");
 
 const userSchema = mongoose.Schema({
     email: {type: String, required: true, unique: true,
@@ -40,6 +42,18 @@ userSchema.methods.getRefreshToken = async function() {
     const refreshToken = await refreshTokenRepository.getUserToken(this);
 
     if (refreshToken) {
+        try {
+            await jwt.verify(refreshToken.token, "stub");
+        } catch (e) {
+            if (e instanceof TokenExpiredError) {
+                await refreshTokenRepository.deleteUserToken(this);
+                return await this.getRefreshToken();
+            }
+
+            console.error(e);
+            throw e;
+        }
+
         return refreshToken.token;
     }
 

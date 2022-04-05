@@ -13,7 +13,7 @@ exports.getUserToken = async (user) => {
 }
 
 exports.deleteUserToken = async (user) => {
-    const res = await RefreshToken.remove({user: user._id});
+    const res = await RefreshToken.deleteOne({user: user._id});
 
     return res;
 }

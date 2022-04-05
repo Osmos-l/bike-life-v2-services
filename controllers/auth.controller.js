@@ -4,7 +4,6 @@ const refreshTokenRepository = require('../repository/refresh_token.repository')
 
 const jwt = require('jsonwebtoken');
 
-
 const hidePassword = (user) => {
     const { password, ...info } = user._doc;
     return info;
@@ -41,7 +40,6 @@ exports.register = async (req, res) => {
 
 }
 
-
 exports.refreshToken = async (req, res) => {
     const { refreshToken } = req.body;
 
@@ -67,4 +65,25 @@ exports.refreshToken = async (req, res) => {
         return responseRepository.error(res, "Impossible to refresh with this token");
     }
 
+}
+
+exports.logout = async (req, res) => {
+    const { refreshToken } = req.body
+
+    try {
+        const decodedToken = await jwt.verify(refreshToken, "stub");
+        if (!decodedToken || !decodedToken.ID) {
+            throw "Incorrect refresh token";
+        }
+        const user = await userRepository.findOneById(decodedToken.ID);
+        if (!user) {
+            throw "User not find";
+        }
+
+        await refreshTokenRepository.deleteUserToken(user);
+    } catch (e) {
+        console.error(e);
+    }
+
+    return responseRepository.good(res, "Logout with success");
 }
