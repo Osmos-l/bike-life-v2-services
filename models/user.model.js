@@ -35,7 +35,7 @@ userSchema.methods.comparePassword = async function(password) {
 }
 
 userSchema.methods.getAccessToken = async function() {
-    return await Token.generate({ ID: this._id }, process.env.PAYLOAD_TOKENS, "1min");
+    return await Token.generate({ ID: this._id }, process.env.PAYLOAD_TOKENS, "5m");
 }
 
 userSchema.methods.getRefreshToken = async function() {
