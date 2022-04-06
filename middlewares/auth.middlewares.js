@@ -1,26 +1,13 @@
-const jwt = require('jsonwebtoken');
 const responseRepository = require('../repository/response.repository');
 const userRepository = require('../repository/user.repository');
-
-const getTokenFromRequest = (req) => {
-    return req.headers.authorization.split(' ')[1];
-};
-
-const getUserIdFromToken = (token) => {
-    try {
-        const decodedToken = jwt.verify(token, "stub");
-        return decodedToken.ID;
-    } catch( error ) {
-        throw error;
-    }
-}
+const Token = require('../token');
 
 module.exports = async (req, res, next) => {
     try {
         const userIdFromBodyRequest = req.body.userId || req.params.ownerId;
 
-        const token = getTokenFromRequest(req);
-        const userIdFromJWT = getUserIdFromToken(token);
+        const token = Token.getTokenFromReqHeader(req);
+        const userIdFromJWT = Token.getUserIdFromToken(token);
 
         if (userIdFromJWT == userIdFromBodyRequest) {
             // Can throw an error
@@ -31,6 +18,7 @@ module.exports = async (req, res, next) => {
             throw 'Bad access token';
         }
     } catch (e) {
+        console.log(e);
         responseRepository.notAuthenticated(res);
     }
 }

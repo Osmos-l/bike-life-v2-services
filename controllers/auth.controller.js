@@ -1,6 +1,7 @@
 const responseRepository = require('../repository/response.repository');
 const userRepository = require('../repository/user.repository');
 const refreshTokenRepository = require('../repository/refresh_token.repository');
+const Token = require('../token');
 
 const jwt = require('jsonwebtoken');
 
@@ -49,7 +50,7 @@ exports.refreshToken = async (req, res) => {
     const { refreshToken } = req.body;
 
     try {
-        const decodedToken = await jwt.verify(refreshToken, "stub");
+        const decodedToken = await jwt.verify(refreshToken, process.env.PAYLOAD_TOKENS);
         if (!decodedToken || !decodedToken.ID) {
             throw "Incorrect refresh token";
         }
@@ -72,11 +73,27 @@ exports.refreshToken = async (req, res) => {
 
 }
 
+exports.getUser = async (req, res) => {
+    try {
+        const accessToken = Token.getTokenFromReqHeader(req);
+        const userId = Token.getUserIdFromToken(accessToken);
+
+        const user = await userRepository.findOneById(userId);
+        if (!user) {
+            throw 'User not found';
+        }
+
+        return responseRepository.good(res, { user: hidePassword(user) });
+    } catch (e) {
+        return responseRepository.error(res, "Cannot get user");
+    }
+}
+
 exports.logout = async (req, res) => {
     const { refreshToken } = req.body
 
     try {
-        const decodedToken = await jwt.verify(refreshToken, "stub");
+        const decodedToken = await jwt.verify(refreshToken, process.env.PAYLOAD_TOKENS);
         if (!decodedToken || !decodedToken.ID) {
             throw "Incorrect refresh token";
         }

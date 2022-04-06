@@ -35,7 +35,7 @@ userSchema.methods.comparePassword = async function(password) {
 }
 
 userSchema.methods.getAccessToken = async function() {
-    return await Token.generate({ ID: this._id }, "stub", "1min");
+    return await Token.generate({ ID: this._id }, process.env.PAYLOAD_TOKENS, "1min");
 }
 
 userSchema.methods.getRefreshToken = async function() {
@@ -43,7 +43,7 @@ userSchema.methods.getRefreshToken = async function() {
 
     if (refreshToken) {
         try {
-            await jwt.verify(refreshToken.token, "stub");
+            await jwt.verify(refreshToken.token, process.env.PAYLOAD_TOKENS);
         } catch (e) {
             if (e instanceof TokenExpiredError) {
                 await refreshTokenRepository.deleteUserToken(this);
@@ -57,7 +57,7 @@ userSchema.methods.getRefreshToken = async function() {
         return refreshToken.token;
     }
 
-    const token = await Token.generate({ ID: this._id }, "stub", "1d")
+    const token = await Token.generate({ ID: this._id }, process.env.PAYLOAD_TOKENS, "14d")
     await refreshTokenRepository.insert(this, token);
 
     return token;
