@@ -17,3 +17,14 @@ exports.deleteUserToken = async (user) => {
 
     return res;
 }
+
+exports.deleteExpiredTokens = async () => {
+    const searchDate = new Date();
+    searchDate.setDate(searchDate.getDate() - 15);
+
+    const res = await RefreshToken.deleteMany({created_at: {
+            $lte: searchDate
+        }})
+
+    return res;
+}

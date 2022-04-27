@@ -35,7 +35,7 @@ userSchema.methods.comparePassword = async function(password) {
 }
 
 userSchema.methods.getAccessToken = async function() {
-    return await Token.generate({ ID: this._id }, process.env.PAYLOAD_TOKENS, "5m");
+    return await Token.generate({ ID: this._id }, process.env.PAYLOAD_TOKENS, process.env.ACCESS_TOKEN_DURATION);
 }
 
 userSchema.methods.getRefreshToken = async function() {
@@ -57,7 +57,7 @@ userSchema.methods.getRefreshToken = async function() {
         return refreshToken.token;
     }
 
-    const token = await Token.generate({ ID: this._id }, process.env.PAYLOAD_TOKENS, "14d")
+    const token = await Token.generate({ ID: this._id }, process.env.PAYLOAD_TOKENS, process.env.REFRESH_TOKEN_DURATION)
     await refreshTokenRepository.insert(this, token);
 
     return token;
