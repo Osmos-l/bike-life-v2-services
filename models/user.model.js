@@ -30,7 +30,7 @@ userSchema.pre('save', async function(next) {
     }
 })
 
-userSchema.methods.comparePassword = async function(password) {
+/*userSchema.methods.comparePassword = async function(password) {
     return await bcrypt.compare(password, this.password);
 }
 
@@ -61,6 +61,6 @@ userSchema.methods.getRefreshToken = async function() {
     await refreshTokenRepository.insert(this, token);
 
     return token;
-}
+}*/
 
 module.exports = mongoose.model('users', userSchema);

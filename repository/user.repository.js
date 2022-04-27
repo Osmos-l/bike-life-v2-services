@@ -1,4 +1,5 @@
 const User = require('../models/user.model');
+const { modelToEntity } = require('../mapper/user.mapper');
 
 const checkIfUserExist = async (email, username) => {
     let errors = [];
@@ -20,7 +21,7 @@ exports.create = async (email, username, password) => {
 
     const user = new User({email, username, password });
 
-    return await user.save();
+    return modelToEntity(await user.save());
 }
 
 exports.findOneByUsername = async (username) => {
@@ -29,7 +30,7 @@ exports.findOneByUsername = async (username) => {
         throw 'User not found';
     }
 
-    return user;
+    return modelToEntity(user);
 }
 
 exports.findOneById = async (id) => {
@@ -38,5 +39,5 @@ exports.findOneById = async (id) => {
         throw 'User not found';
     }
 
-    return user;
+    return modelToEntity(user);
 }

@@ -5,11 +5,6 @@ const Token = require('../token');
 
 const jwt = require('jsonwebtoken');
 
-const hidePassword = (user) => {
-    const { password, ...info } = user._doc;
-    return info;
-}
-
 exports.login = async (req, res) => {
     const { username, password, rememberMe } = req.body;
 
@@ -27,7 +22,7 @@ exports.login = async (req, res) => {
         if (rememberMe) {
             tokens.refreshToken = await user.getRefreshToken();
         }
-        return responseRepository.login(res, hidePassword(user), tokens);
+        return responseRepository.login(res, user.toJSON(), tokens);
     } catch (e) {
         return responseRepository.error(res, { msg: 'Invalid credentials' });
     }
@@ -39,7 +34,7 @@ exports.register = async (req, res) => {
     try {
         const user = await userRepository.create(email, username, password);
 
-        return responseRepository.created(res, hidePassword(user));
+        return responseRepository.created(res, user.toJSON());
     } catch (errors) {
         return responseRepository.error(res, errors);
     }
@@ -83,7 +78,7 @@ exports.getUser = async (req, res) => {
             throw 'User not found';
         }
 
-        return responseRepository.good(res, { user: hidePassword(user) });
+        return responseRepository.good(res, { user: user.toJSON() });
     } catch (e) {
         return responseRepository.error(res, "Cannot get user");
     }
